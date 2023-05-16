@@ -1,5 +1,7 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
+// import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 // Об'єкт налаштувань для функції бібліотеки "flatpickr"
 const options = {
@@ -14,3 +16,5 @@ const options = {
 
 // Ініціалізація бібліотеки "flatpickr" на елементі input
 const fp = flatpickr('#datetime-picker', options);
+
+Notiflix.Notify.failure('Please, choose a date in the future');
