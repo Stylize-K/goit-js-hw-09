@@ -5,6 +5,7 @@ import Notiflix from 'notiflix';
 const btnStart = document.querySelector('button[data-start]');
 
 btnStart.disabled = true;
+
 let delta = null;
 let targetTime = null;
 let currentTime = null;
@@ -35,10 +36,12 @@ const fp = flatpickr('#datetime-picker', options);
 
 btnStart.addEventListener('click', onBtnStartClick);
 
+// Функція, що додає 0, якщо в числі менше двох символів
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
 
+//Створення класу countDownTimer
 class countDownTimer {
   constructor({ selector, targetDate }) {
     this.targetDate = targetDate;
@@ -78,12 +81,14 @@ class countDownTimer {
   }
 }
 
+//Ініціалізація таймера (створення еземплеру класу countDownTimer)
 const timer1 = new countDownTimer({
   selector: '.timer',
   // targetDate: new Date('Jul 1, 2023'),
   targetDate: targetTime,
 });
 
+//Функція запуску таймера по кліку кнопки "Start"
 function onBtnStartClick() {
   timer1.updateMarkup();
 }
