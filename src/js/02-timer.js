@@ -2,10 +2,13 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
+//Посилання на кнопки "Start" і "Reset"
 const btnStart = document.querySelector('button[data-start]');
+const btnReset = document.querySelector('button[data-reset]');
 
-//Блокуємо кнопку "Start" одразу після зарантаження сторінки
+//Блокуємо кнопки "Start" і "Reset" одразу після зарантаження сторінки
 btnStart.disabled = true;
+btnReset.disabled = true;
 
 // Об'єкт налаштувань для функції бібліотеки "flatpickr"
 const options = {
@@ -26,11 +29,13 @@ const options = {
 
 // Ініціалізація бібліотеки "flatpickr" на елементі input
 const fp = flatpickr('#datetime-picker', options);
+// flatpickr('#datetime-picker', options);
 
 //Створення класу countDownTimer
 class countDownTimer {
   constructor({ selector }) {
     this.targetDate;
+    this.intervalId = null;
     this.daysSpan = document.querySelector(`${selector} [data-days]`);
     this.hoursSpan = document.querySelector(`${selector} [data-hours]`);
     this.minutesSpan = document.querySelector(`${selector} [data-minutes]`);
@@ -43,7 +48,7 @@ class countDownTimer {
 
   //Метод класу, що генерує розмітку таймера
   updateMarkup() {
-    const intervalId = setInterval(() => {
+    this.intervalId = setInterval(() => {
       const currentTime = Date.now();
       const delta = this.targetDate - currentTime;
       const { days, hours, minutes, seconds } = this.convertMs(delta);
@@ -52,10 +57,24 @@ class countDownTimer {
       this.minutesSpan.textContent = minutes;
       this.secondsSpan.textContent = seconds;
 
+      //Зупинка таймера, коли delta менше 1 секунди
       if (delta < 1000) {
-        clearInterval(intervalId);
+        clearInterval(this.intervalId);
+        btnReset.disabled = true;
+        Notiflix.Notify.success('The timer has been completed');
       }
     }, 1000);
+  }
+
+  //Метод класу, що зупиняє таймер та очищуе поля
+  reset() {
+    clearInterval(this.intervalId);
+    const { days, hours, minutes, seconds } = this.convertMs(0);
+    this.daysSpan.textContent = days;
+    this.hoursSpan.textContent = hours;
+    this.minutesSpan.textContent = minutes;
+    this.secondsSpan.textContent = seconds;
+    Notiflix.Notify.info('Timer has been reset');
   }
 
   // Метод класу, що додає 0, якщо в числі менше двох символів (для форматування часу)
@@ -88,5 +107,18 @@ const timer = new countDownTimer({
   selector: '.timer',
 });
 
-//Вішаємо слухача на клік кнопки "Start" та передаємо в колбек метод таймера (обов'язкого прив'язуємо контекст через метод bind)
-btnStart.addEventListener('click', timer.updateMarkup.bind(timer));
+btnStart.addEventListener('click', onStartclick);
+btnReset.addEventListener('click', onResetClick);
+
+// Функція, що запускає роботу таймера
+function onStartclick() {
+  btnReset.disabled = false;
+  btnStart.disabled = true;
+  timer.updateMarkup();
+}
+
+// Функція, що скидує таймер
+function onResetClick() {
+  timer.reset();
+  btnReset.disabled = true;
+}
