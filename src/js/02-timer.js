@@ -2,9 +2,10 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import Notiflix from 'notiflix';
 
-//Посилання на кнопки "Start" і "Reset"
+//Посилання на кнопки "Start" і "Reset" та на поле input
 const btnStart = document.querySelector('button[data-start]');
 const btnReset = document.querySelector('button[data-reset]');
+const inputEl = document.querySelector('#datetime-picker');
 
 //Блокуємо кнопки "Start" і "Reset" одразу після зарантаження сторінки
 btnStart.disabled = true;
@@ -28,8 +29,8 @@ const options = {
 };
 
 // Ініціалізація бібліотеки "flatpickr" на елементі input
-const fp = flatpickr('#datetime-picker', options);
-// flatpickr('#datetime-picker', options);
+flatpickr('#datetime-picker', options);
+// const fp = flatpickr('#datetime-picker', options);
 
 //Створення класу countDownTimer
 class countDownTimer {
@@ -61,6 +62,7 @@ class countDownTimer {
       if (delta < 1000) {
         clearInterval(this.intervalId);
         btnReset.disabled = true;
+        inputEl.disabled = false;
         Notiflix.Notify.success('The timer has been completed');
       }
     }, 1000);
@@ -114,6 +116,7 @@ btnReset.addEventListener('click', onResetClick);
 function onStartclick() {
   btnReset.disabled = false;
   btnStart.disabled = true;
+  inputEl.disabled = true;
   timer.updateMarkup();
 }
 
@@ -121,4 +124,5 @@ function onStartclick() {
 function onResetClick() {
   timer.reset();
   btnReset.disabled = true;
+  inputEl.disabled = false;
 }
